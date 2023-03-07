@@ -11,6 +11,7 @@ matplotlib.use('Agg')
 import datetime
 import pandas as pd
 import json
+import ast
 
 def solve_equations(x, Nfail, K, pfail, Nman):
     '''
@@ -152,25 +153,66 @@ def result_record(p_inj_real,p_lrn,pfail,folder_name, gate2index):
 
     plt.savefig(f'{this_path}/figure.png')
 
+def dump(reserved_faults, reserved_diag, circuit):
+    with open(f'data/{circuit}/faults.txt', 'w') as f:
+        for item in reserved_faults:
+            f.write("%s\n" % item)
+
+    with open(f'data/{circuit}/diag.txt', 'w') as f:
+        for item in reserved_diag:
+            f.write(f'{item}\n')
+
+def read(circuit):
+     
+     # 读取文件
+    with open(f'data/{circuit}/faults.txt', 'r') as f:
+        lines = f.readlines()
+
+    # 将文件内容转换成列表
+    reserved_faults = []
+    for line in lines:
+        fault = ast.literal_eval(line)
+        reserved_faults.append(fault)
+
+    # 读取文件
+    with open(f'data/{circuit}/diag.txt', 'r') as f:
+        lines = f.readlines()
+
+    # 将文件内容转换成列表
+    reserved_diag = []
+    for line in lines:
+        diag = ast.literal_eval(line)
+        reserved_diag.append(diag)
+
+
+    return reserved_faults,reserved_diag
+
+
+        
+
 if __name__ == '__main__':
     # params 
-    circuit = 's15850'
-    fault_type = 'ssl'
+    circuit = 's6669'
     file = 'tag.tmp'
     min_num = 0
+    inj_faults, gate2index = real_inj(f'data/{circuit}/{file}', min_num)
+    '''
+    原始提取
+    fault_type = 'ssl'
+    
     diag_floder = 'good_diagnosis_report'
     
     path = f'/home/hk/user/chenyu/fatsimTest1/{circuit}/{circuit}_{fault_type}'
     print(path)
-    # /home/hk/user/chenyu/fatsimTest1/s35932/s35932_ssl/tag.tmp
+   
     file_path =  '/'.join((path,file))
     
-    inj_faults, gate2index = real_inj(file_path, min_num)
-    # dump(inj_faults,f'{circuit}_{fault_type}_inj.txt')
-    # print(len(os.listdir(f'{path}/{diag_floder}')))
+    
+    dump(inj_faults,f'{circuit}_{fault_type}_inj.txt')
+    print(len(os.listdir(f'{path}/{diag_floder}')))
     
     # 诊断文件小于插入故障行数
-    # prefixs = []
+    prefixs = []
     diag_path = f'{path}/{diag_floder}'
     row2diag = {}
     for diag_file in os.listdir(diag_path):
@@ -203,6 +245,10 @@ if __name__ == '__main__':
     pass
     # 剔除嫌疑中不存在插入故障的芯片
     reserved_faults, reserved_diag = filter(fault_idxs,diag_result)
+    dump(reserved_faults,reserved_diag, circuit)
+
+    '''
+    reserved_faults, reserved_diag = read(circuit)
 
     Nfail = len(reserved_faults)
     # 计算特征数
@@ -236,7 +282,7 @@ if __name__ == '__main__':
 
     print(f'注入概率{[f"{num:.5g}" for num in p_inj_real]}')
     print(f'学习概率{[f"{num:.5g}" for num in p_lrn]}')
-    folder_name = f'{circuit}_{fault_type}'
+    folder_name = f'{circuit}'
     result_record(p_inj_real,p_lrn,pfail, folder_name,gate2index)
 
 
