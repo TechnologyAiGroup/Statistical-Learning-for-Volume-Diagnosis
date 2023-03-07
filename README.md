@@ -1,5 +1,5 @@
-# **Analyzing Volume Diagnosis Results with Statistical Learning for Yield Improvement**
-This repository contains the code used to reproduce the results presented in the paper titled "Analyzing Volume Diagnosis Results with Statistical Learning for Yield Improvement" by Huaxing Tang, et al.
+# **Feature-based Statistical Learning for Volume Diagnosis**
+This repository contains the code used to reproduce the results presented in the ETS 2007 paper.
 ## **Overview**
 The goal of this study was to investigate the use of statistical learning methods to analyze volume diagnosis results and improve yield in chip manufacturing. The authors proposed a method for modeling and mitigating diagnosis noise in volume diagnosis data and evaluated the effectiveness of their approach using simulated and real-world datasets.
 
